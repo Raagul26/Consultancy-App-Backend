@@ -29,19 +29,30 @@ public class JobsAppliedController {
     }
 
     @GetMapping("/{emailId}")
-    public JobsApplied getStatus(@PathVariable @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}", message = "must be a valid email id") String emailId)
+    public ResponseEntity<ApiResponse> getStatus(@PathVariable @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}", message = "must be a valid email id") String emailId)
     {
-        return jobsAppliedServiceImpl.getCandidateStatus(emailId);
+        ApiResponse response = new ApiResponse();
+        response.setStatus("Success");
+        response.setMessage("Fetched Succesfully");
+        response.setData(jobsAppliedServiceImpl.getCandidateStatus(emailId));
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @PostMapping("/apply")
     public ResponseEntity<ApiResponse> createApplication(@Valid @RequestBody JobsApplied jobsApplied)
     {
         ApiResponse response = new ApiResponse();
-        jobsAppliedServiceImpl.applyJob(jobsApplied);
-        response.setStatus("Success");
-        response.setMessage("Application created successfully");
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        if( jobsAppliedServiceImpl.applyJob(jobsApplied))
+        {
+            response.setStatus("Success");
+            response.setMessage("Application created successfully");
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        }
+        else {
+            response.setStatus("Failed");
+            response.setMessage("Already applied");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/changeStatus")

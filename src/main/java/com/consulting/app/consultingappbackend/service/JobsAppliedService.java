@@ -10,9 +10,9 @@ public interface JobsAppliedService {
 
     List<JobsApplied> getAllApplications();
 
-    JobsApplied getCandidateStatus(String emailId);
+    List<JobsApplied> getCandidateStatus(String emailId);
 
-    void applyJob(JobsApplied jobsApplied);
+    Boolean applyJob(JobsApplied jobsApplied);
 
     void changeJobApplicationStatus(JobsApplied jobsApplied);
 

@@ -20,18 +20,22 @@ public class JobsAppliedServiceImpl implements JobsAppliedService {
     }
 
     @Override
-    public JobsApplied getCandidateStatus(String emailId) {
+    public List<JobsApplied> getCandidateStatus(String emailId) {
         return jobsAppliedRepository.findByEmailId(emailId);
     }
 
     @Override
-    public void applyJob(JobsApplied jobsApplied) {
-        JobsApplied newApplication = new JobsApplied();
-        newApplication.setJobId(jobsApplied.getJobId());
-        newApplication.setEmailId(jobsApplied.getEmailId());
-        newApplication.setStatus("Applied");
+    public Boolean applyJob(JobsApplied jobsApplied) {
+        if (jobsAppliedRepository.findByJobIdAndEmailId(jobsApplied.getJobId(), jobsApplied.getEmailId()) == null) {
+            JobsApplied newApplication = new JobsApplied();
+            newApplication.setJobId(jobsApplied.getJobId());
+            newApplication.setEmailId(jobsApplied.getEmailId());
+            newApplication.setStatus("Applied");
 
-        jobsAppliedRepository.insert(newApplication);
+            jobsAppliedRepository.insert(newApplication);
+            return true;
+        }
+        return false;
     }
 
     @Override
